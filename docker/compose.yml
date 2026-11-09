@@ -1,0 +1,35 @@
+services:
+
+  # Applications
+
+  product-service:
+    depends_on:
+      - product-postgres
+    image: "product-service"
+    container_name: "product-service"
+    ports:
+      - 9001:9001
+      - 8001:8001
+    environment:
+      - SPRING_CLOUD_CONFIG_URI=http://config-service:8888
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://product-postgres:5432/productdb
+      - SPRING_PROFILES_ACTIVE=testdata
+  
+  config-service:
+    image: "product-config-service"
+    container_name: "product-config-service"
+    ports:
+      - 8888:8888
+      - 9888:9888
+
+  # Backing Services
+
+  product-postgres:
+    image: "postgres:18.6"
+    container_name: "product-postgres"
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=productdb
